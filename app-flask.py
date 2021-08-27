@@ -23,19 +23,6 @@ app = Flask(__name__)
 app.secret_key = "DiFAdW#8UNVR%M"
 oauth = OAuth(app)
 
-# SESSION_TYPE = 'filesystem'
-# app.config.from_object(__name__)
-# Session(app)
-
-# @app.route('/set/<key>/<value>')
-# def set(key,value):
-#     session[key] = value
-#     return 'ok'
-
-# @app.route('/get/<key>')
-# def get(key):
-#     return session.get(key)
-
 oauth.register(
     name='pavlok',
     client_id='f4037a18271857d6512700426dfe93ae80e96033c55017c84989adad67ea6087',
@@ -86,3 +73,17 @@ def vibrate():
 @app.route('/get_token')
 def get_token():
     return pavlok.token
+
+
+# SESSION_TYPE = 'filesystem'
+# app.config.from_object(__name__)
+# Session(app)
+
+# @app.route('/set/<key>/<value>')
+# def set(key,value):
+#     session[key] = value
+#     return 'ok'
+
+# @app.route('/get/<key>')
+# def get(key):
+#     return session.get(key)
