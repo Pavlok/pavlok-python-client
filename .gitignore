@@ -112,3 +112,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+flask_session
+flask_session/*
+*.DS_Store*
