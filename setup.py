@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name='Pavlok Python Client',
+    name='pavlok',
     version='0.1.0',
     license='MIT',
     author="Maneesh Sethi",
@@ -13,10 +13,10 @@ setup(
     keywords='pavlok',
     install_requires=[
         'Authlib==0.15.4',
-        'fastapi==0.65.3',
+        'fastapi',
         'pydantic==1.8.2',
         'python-dotenv==0.19.0',
-        'starlette==0.15.0',
+        'starlette',
         'starsessions==1.1.0',
         'urllib3==1.26.6',
         'uvicorn==0.15.0'

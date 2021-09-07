@@ -6,13 +6,13 @@ from starlette.responses import RedirectResponse
 from authlib.integrations.starlette_client import OAuth
 from starlette.config import Config
 from fastapi.responses import HTMLResponse
-from starsessions import SessionMiddleware
+#from starsessions import SessionMiddleware
 
 
 app = FastAPI(title="Pavlok Python Client", version="0.1.0")
 # we need this to save temporary code & state in session
 #app.add_middleware(SessionMiddleware, secret_key="DiFAdW#8UNVR%M")
-app.add_middleware(SessionMiddleware, secret_key='secret', autoload=True)
+app.add_middleware(SessionMiddleware, secret_key='secret')#, autoload=True)
 
 
 

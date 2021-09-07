@@ -11,7 +11,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "app:app",
+                "src.app:app",
                 "--reload"
             ],
             "justMyCode": false,
