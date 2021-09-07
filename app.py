@@ -1,20 +1,18 @@
-from flask import Flask, jsonify, url_for, session, redirect
-from flask_session import Session
 from authlib.integrations.flask_client import OAuth
-from typing import Optional
-
 from fastapi import FastAPI
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
-from starlette.responses import RedirectResponse, Response, JSONResponse
+from starlette.responses import RedirectResponse
 from authlib.integrations.starlette_client import OAuth
 from starlette.config import Config
 from fastapi.responses import HTMLResponse
+from starsessions import SessionMiddleware
 
 
 app = FastAPI(title="Pavlok Python Client", version="0.1.0")
 # we need this to save temporary code & state in session
-app.add_middleware(SessionMiddleware, secret_key="DiFAdW#8UNVR%M")
+#app.add_middleware(SessionMiddleware, secret_key="DiFAdW#8UNVR%M")
+app.add_middleware(SessionMiddleware, secret_key='secret', autoload=True)
 
 
 
@@ -24,63 +22,53 @@ class Pavlok:
     token: int = None
 
         
-    def set(self,value):
-        session['pavlok-token'] = value
+    def set(self,value, request:Request):
+#        session['pavlok-token'] = value
+        request.session['pavlok-token'] = value
+
         return 'ok'
 
 
-    def get(self):
-        return session.get('pavlok-token')
+    def get(self,request:Request):
+        return request.session['pavlok-token']
     
-    def clear(self):
-        session['pavlok-token'] = None
+    def clear(self,request:Request):
+        request.session.clear()#['pavlok-token'] = None
         return 'ok'
     
-    
-#app = Flask(__name__)
-#app.secret_key = "DiFAdW#8UNVR%M"
-#oauth = OAuth(app)
-
-# SESSION_TYPE = 'filesystem'
-# app.config.from_object(__name__)
-# Session(app)
-
-# @app.route('/set/<key>/<value>')
-# def set(key,value):
-#     session[key] = value
-#     return 'ok'
-
-# @app.route('/get/<key>')
-# def get(key):
-#     return session.get(key)
 config = Config('.env')  # read config from .env file
 oauth = OAuth(config)
 oauth.register(
-    name='pavlok', access_token_url='https://app.pavlok.com/oauth/token',
-      client_id='f4037a18271857d6512700426dfe93ae80e96033c55017c84989adad67ea6087',
-    client_secret='21f1b59b17e88f657bdcc5f8cbe8abb0128ee722b8b400799bec7b1665d3e2b6',
-  
-    access_token_params=None,
-    authorize_url='https://app.pavlok.com/oauth/authorize',
+    name='pavlok',
+    access_token_url=config('access_token_url'),
+    client_id=config('client_id'),
+    client_secret=config('client_secret'),
+#   access_token_params=config('access_token_params'),
+    authorize_url=config('authorize_url'),
+#   authorize_params=config('authorize_params'),
     authorize_params=None,
-    api_base_url='https://app.pavlok.com/api/v1/stimuli'
+    api_base_url=config('api_base_url')
 )
 
 pavlok_client = oauth.create_client('pavlok')
 
 pavlok = Pavlok()
 
+@app.get('/')
+async def dashboard(request: Request):
+    ret_html= "<a href='/login'>Login</a>"
+    return HTMLResponse(content=ret_html,status_code=200)
 
 @app.get('/authorize')
 async def authorize(request: Request):
     token = await oauth.pavlok.authorize_access_token(request)
     pavlok.token = token
-    #pavlok.set(token)
-    #user = await oauth.pavlok.parse_id_token(request, token)
+    pavlok.set(token,request)
+    user = await oauth.pavlok.parse_id_token(request, token)
     ret_html= str(token) + "\n\n<a href='/vibrate'>vibrate</a>"
     return HTMLResponse(content=ret_html,status_code=200)
 
-@app.route('/login')
+@app.get('/login')
 async def login(request: Request):
     #redirect_uri = url_for('authorize', _external=True)
     redirect_uri = request.url_for('authorize')
@@ -88,8 +76,8 @@ async def login(request: Request):
 
 
 @app.get("/logout")
-async def logout():
-    return pavlok.clear()
+async def logout(request: Request):
+    return pavlok.clear(request)
 
 @app.get("/vibrate")
 @app.get("/vibrate/{strength}")
@@ -145,6 +133,10 @@ async def beep(strength: str = "200"):
     print(v.text)
     return v.text 
 
-@app.route('/get_token')
-def get_token():
-    return pavlok.token
+@app.get('/get_token')
+async def get_token(request: Request):
+    return pavlok.get(request)
+
+@app.get('/set_token')
+async def set_token(request: Request):
+    return pavlok.set(request)

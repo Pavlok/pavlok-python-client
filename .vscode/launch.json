@@ -11,9 +11,10 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "app-fastapi:app",
+                "app:app",
                 "--reload"
             ],
+            "justMyCode": false,
             "jinja": true
         },
         {

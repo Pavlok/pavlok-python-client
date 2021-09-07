@@ -117,3 +117,6 @@ flask_session/*
 *.DS_Store*
 archived/
 venv/
+.requirements.txt.swp
+.vscode/
+.vscode/launch.json
