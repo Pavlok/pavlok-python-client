@@ -115,3 +115,5 @@ dmypy.json
 flask_session
 flask_session/*
 *.DS_Store*
+archived/
+venv/
