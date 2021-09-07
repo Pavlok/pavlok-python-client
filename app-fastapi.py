@@ -12,7 +12,7 @@ from starlette.config import Config
 from fastapi.responses import HTMLResponse
 
 
-app = FastAPI()
+app = FastAPI(title="Pavlok Python Client", version="0.1.0")
 # we need this to save temporary code & state in session
 app.add_middleware(SessionMiddleware, secret_key="DiFAdW#8UNVR%M")
 
