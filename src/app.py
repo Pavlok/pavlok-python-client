@@ -91,7 +91,6 @@ async def vibrate(strength: str = "200"):
         #return url_for('login', _external=True)
  #   else: 
  #       pass #       pavlok.token = sess
-    print("TOKENN-->" , pavlok.token)
     if pavlok.token is None:
         response = RedirectResponse(url='/login')
         return response
