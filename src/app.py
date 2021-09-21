@@ -54,6 +54,8 @@ pavlok_client = oauth.create_client('pavlok')
 
 pavlok = Pavlok()
 
+# asdf
+
 @app.get('/')
 async def dashboard(request: Request):
     ret_html= "<a href='/login'>Login</a>"
@@ -71,7 +73,8 @@ async def authorize(request: Request):
 @app.get('/login')
 async def login(request: Request):
     #redirect_uri = url_for('authorize', _external=True)
-    redirect_uri = request.url_for('authorize')
+    redirect_uri = 'urn:ietf:wg:oauth:2.0:oob'
+    # redirect_uri = request.url_for('authorize')
     return await oauth.pavlok.authorize_redirect(request, redirect_uri)
 
 
