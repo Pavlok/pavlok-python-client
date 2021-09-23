@@ -10,7 +10,7 @@ from authlib.integrations.starlette_client import OAuth
 from typing import Optional
 from starlette.requests import Request
 
-from constants import PAVLOK_BASE_URL, PAVLOK_API_BASE_URL, PAVLOK_STIMULI_API_URL
+from .constants import PAVLOK_BASE_URL, PAVLOK_API_BASE_URL, PAVLOK_STIMULI_API_URL
 
 PavlokOAuth = OAuth()
 
