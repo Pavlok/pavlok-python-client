@@ -50,7 +50,7 @@ class Pavlok:
     def set_token(self, token, request: Request):
         request.session["pavlok-token"] = token
         self.token = token
-        return True
+        return token
 
     def get_token(self):
         return self.token

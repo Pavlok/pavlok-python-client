@@ -72,9 +72,9 @@ async def zap(strength: str = "200"):
 
 @app.get("/get_token")
 async def get_token(request: Request):
-    return pavlok.get_token(request)
+    return pavlok.get_token()
 
 
-@app.get("/set_token")
-async def set_token(request: Request):
-    return pavlok.set_token(request)
+@app.post("/set_token")
+async def set_token(token: str, request: Request):
+    return pavlok.set_token(token, request)
