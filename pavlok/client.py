@@ -52,7 +52,7 @@ class Pavlok:
         self.token = token
         return True
 
-    def get_token(self, request: Request):
+    def get_token(self):
         return self.token
 
     def clear_token(self, request: Request):
