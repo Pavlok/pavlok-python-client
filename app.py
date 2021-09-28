@@ -5,7 +5,7 @@ from starlette.responses import RedirectResponse
 from starlette.config import Config
 from fastapi.responses import HTMLResponse
 
-from pavlok.client import Pavlok
+from src.pavlok.client import Pavlok
 
 app = FastAPI(title="Pavlok Python Client", version="0.1.0")
 # we need this to save temporary code & state in session
