@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <title>Pavlok Python Client</title>
+</head>
+<body>
+    <div class="min-h-screen bg-gray-100 flex flex-col justify-center">
+      <div class="relative py-3 sm:max-w-xl sm:mx-auto">
+        <div class="relative p-4 bg-white shadow-lg sm:rounded-xl h-full">
+          <div class="min-w-lg mx-auto">
+            <div>
+              <img src="https://pavlokbackup.wpengine.com//svg/pavlok-logo.svg" class="h-7 sm:h-8" />
+            </div>
+            <div class="divide-y divide-gray-200">
+              <div class="py-8 text-base leading-6 space-y-3 text-gray-700 sm:text-lg sm:leading-7 w-">
+                  {% block content %}{% endblock %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+</html>
