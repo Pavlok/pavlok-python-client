@@ -37,7 +37,7 @@ You'll need to choose a callback URL of `http://localhost:8000/authorize` for lo
 First thing you'd need to do is import the module into your app.
 
 ```
-from pavlok.client import Pavlok
+from pavlok.main import Pavlok
 ```
 
 The simplest and quickest way to start using the module is to try it in the local mode.
