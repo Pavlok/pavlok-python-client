@@ -1,1 +1,1 @@
-include src/templates/*.html
+include src/pavlok/templates/*.html

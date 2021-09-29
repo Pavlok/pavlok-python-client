@@ -5,6 +5,7 @@
     Pavlok Python Client
 
 """
+from os.path import dirname, join
 from authlib.integrations.starlette_client import OAuth
 from typing import Optional
 from fastapi import FastAPI
@@ -18,7 +19,9 @@ from .constants import PAVLOK_BASE_URL, PAVLOK_API_BASE_URL, PAVLOK_STIMULI_API_
 
 PavlokOAuth = OAuth()
 
-templates = Jinja2Templates(directory="src/templates")
+template_path = join(dirname(__file__), "templates")
+
+templates = Jinja2Templates(directory=template_path)
 
 
 class Pavlok:
