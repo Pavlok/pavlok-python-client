@@ -100,9 +100,10 @@ async def vibrate(request: Request, strength: str = "200"):
         return response
     stimuli_response = await self.vibrate(strength=strength)
     return templates.TemplateResponse(
-        "index.html", {"request": request, "token": self.token, "message": stimuli_response}, status_code=200
+        "index.html", {"request": request, "token": self.token, 
+        "message": stimuli_response}, status_code=200
     )
 ```
 
 ### License
-Licensed under the ISC license. 
+Licensed under the MIT license. 

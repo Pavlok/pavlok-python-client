@@ -4,9 +4,13 @@
 from setuptools import setup, find_packages
 
 
+def read(f):
+    return open(f, 'r', encoding='utf-8').read()
+
+
 setup(
     name='pavlok',
-    version='0.1.1',
+    version='0.1.3',
     license='MIT',
     author="Maneesh Sethi",
     author_email='maneesh@pavlok.com',
@@ -15,6 +19,8 @@ setup(
     url='https://github.com/Pavlok/pavlok-python-client',
     keywords='pavlok',
     include_package_data=True,
+    long_description=read('README.md'),
+    long_description_content_type='text/markdown',
     install_requires=[
         "Authlib==0.15.4",
         "fastapi==0.68.1",
