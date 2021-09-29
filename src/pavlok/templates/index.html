@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+  {% if token %}
+    <div class="text-sm text-gray-700 font-bold">
+        Token : <span class="text-indigo-500 text-xs">{{token.access_token}}</span>
+    </div>
+    <div class="flex space-x-2 flex-wrap">
+        <a href="/vibrate">
+            <input
+              class="cursor-pointer text-gray-700 text-sm font-bold bg-yellow-400 border-0 py-1 px-6 focus:outline-none hover:bg-yellow-300 rounded"
+              type="submit"
+              value="Vibrate"
+            />
+        </a>
+        <a href="/beep">
+            <input
+              class="cursor-pointer text-gray-700 text-sm font-bold bg-yellow-400 border-0 py-1 px-6 focus:outline-none hover:bg-yellow-300 rounded"
+              type="submit"
+              value="Beep"
+            />
+        </a>
+        <a href="/zap">
+            <input
+              class="cursor-pointer text-gray-700 text-sm font-bold bg-yellow-400 border-0 py-1 px-6 focus:outline-none hover:bg-yellow-300 rounded"
+              type="submit"
+              value="Zap"
+            />
+        </a>
+        <a href="/logout">
+            <input
+              class="cursor-pointer text-gray-700 text-sm font-bold bg-yellow-400 border-0 py-1 px-6 focus:outline-none hover:bg-yellow-300 rounded"
+              type="submit"
+              value="Logout"
+            />
+        </a>
+    </div>
+    {% if message %}
+        <p class="text-green-500 font-bold text-sm">{{message}}</p>
+    {% endif %}
+    {% else %}
+    <div class="pt-6 text-base leading-6 font-bold sm:text-lg sm:leading-7">
+        <div>
+            <p class="text-gray-700">
+                You are not logged. please login to continue
+            </p>
+            <div class="w-full mt-4">
+                <div class="mx-auto w-24">
+                    <a href="/login">
+                        <input
+                          class="cursor-pointer text-gray-700 text-sm font-bold bg-yellow-400 border-0 py-1 px-6 focus:outline-none hover:bg-yellow-300 rounded"
+                          type="submit"
+                          value="Login"
+                        />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+  {% endif %}
+{% endblock %}
