@@ -18,7 +18,7 @@ import uvicorn
 from .enums import StimulusType
 from .constants import PAVLOK_BASE_URL, PAVLOK_API_BASE_URL
 from .utils import get_stimulus_api_url
-from .pavlok_response_models_examples import StimuliResponse
+from .pavlok_response_models import StimuliResponse
 
 PavlokOAuth = OAuth()
 
