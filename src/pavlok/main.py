@@ -9,13 +9,16 @@ from os.path import dirname, join
 from authlib.integrations.starlette_client import OAuth
 from typing import Optional
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.requests import Request
 import uvicorn
 
-from .constants import PAVLOK_BASE_URL, PAVLOK_API_BASE_URL, PAVLOK_STIMULI_API_URL
+from .enums import StimulusType
+from .constants import PAVLOK_BASE_URL, PAVLOK_API_BASE_URL
+from .utils import get_stimulus_api_url
+from .pavlok_response_models_examples import StimuliResponse
 
 PavlokOAuth = OAuth()
 
@@ -85,11 +88,11 @@ class Pavlok:
     async def send_stimulus(
         self, stimulus_type: str, strength: str = "200", reason: str = ""
     ):
-        if stimulus_type not in ["vibration", "beep", "zap"]:
+        if stimulus_type not in [stimulus.value for stimulus in StimulusType]:
             return False, "Invalid stimulus"
-        stimulus_api_url = PAVLOK_STIMULI_API_URL + stimulus_type + "/" + strength + "/"
+        stimulus_api_url = get_stimulus_api_url(stimulus_type, strength)
         resp = await self.client.post(stimulus_api_url, token=self.token)
-        return True, resp.text, stimulus_api_url
+        return resp.text, stimulus_api_url
 
     async def vibrate(self, strength: str = "200", reason: str = ""):
         return await self.send_stimulus("vibration", strength, reason)
@@ -100,66 +103,83 @@ class Pavlok:
     async def zap(self, strength: str = "200", reason: str = ""):
         return await self.send_stimulus("zap", strength, reason)
 
-    def start(self, port:int = 8000):
+    def start(self, port: int = 8000):
         self.app = FastAPI(title=self.title, version="0.1.0")
 
         self.app.add_middleware(SessionMiddleware, secret_key="secret")
 
-        @self.app.get("/authorize")
+        @self.app.get("/authorize", response_class=RedirectResponse)
         async def authorize(request: Request):
             token = await self.authorize(request)
             user = self.get_user(request)
             return RedirectResponse(url="/")
 
-        @self.app.get("/")
+        @self.app.get("/", response_class=HTMLResponse)
         def dashboard(request: Request):
             return templates.TemplateResponse(
                 "index.html", {"request": request, "token": self.token}, status_code=200
             )
 
-        @self.app.get("/login")
+        @self.app.get("/login", response_class=RedirectResponse)
         async def login(request: Request):
             if self.token:
                 return RedirectResponse(url="/")
             redirect_uri = request.url_for("authorize")
             return await self.login(request, redirect_uri)
 
-        @self.app.get("/logout")
+        @self.app.get("/logout", response_class=RedirectResponse)
         async def logout(request: Request):
             self.clear_token(request)
             return RedirectResponse(url="/")
 
-        @self.app.get("/vibrate")
-        @self.app.get("/vibrate/{strength}")
+        @self.app.get(
+            "/vibrate",
+            response_model=StimuliResponse.StimuliSchema,
+            responses=StimuliResponse.get_stimuli_response(
+                StimulusType.VIBRATION.value
+            ),
+        )
         async def vibrate(request: Request, strength: str = "200"):
             if self.token is None:
                 response = RedirectResponse(url="/login")
                 return response
             stimuli_response = await self.vibrate(strength=strength)
             return templates.TemplateResponse(
-                "index.html", {"request": request, "token": self.token, "message": stimuli_response}, status_code=200
+                "index.html",
+                {"request": request, "token": self.token, "message": stimuli_response},
+                status_code=200,
             )
 
-        @self.app.get("/beep")
-        @self.app.get("/beep/{strength}")
+        @self.app.get(
+            "/beep",
+            response_model=StimuliResponse.StimuliSchema,
+            responses=StimuliResponse.get_stimuli_response(StimulusType.BEEP.value),
+        )
         async def beep(request: Request, strength: str = "200"):
             if self.token is None:
                 response = RedirectResponse(url="/login")
                 return response
             stimuli_response = await self.beep(strength=strength)
             return templates.TemplateResponse(
-                "index.html", {"request": request, "token": self.token, "message": stimuli_response}, status_code=200
+                "index.html",
+                {"request": request, "token": self.token, "message": stimuli_response},
+                status_code=200,
             )
 
-        @self.app.get("/zap")
-        @self.app.get("/zap/{strength}")
+        @self.app.get(
+            "/zap",
+            response_model=StimuliResponse.StimuliSchema,
+            responses=StimuliResponse.get_stimuli_response(StimulusType.ZAP.value),
+        )
         async def zap(request: Request, strength: str = "200"):
             if self.token is None:
                 response = RedirectResponse(url="/login")
                 return response
             stimuli_response = await self.zap(strength=strength)
             return templates.TemplateResponse(
-                "index.html", {"request": request, "token": self.token, "message": stimuli_response}, status_code=200
+                "index.html",
+                {"request": request, "token": self.token, "message": stimuli_response},
+                status_code=200,
             )
 
         @self.app.get("/get_token")
