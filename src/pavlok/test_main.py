@@ -20,9 +20,6 @@ token = {
 }
 
 
-pavlok_headers = {"pavlok-token": token["access_token"]}
-
-
 dotenv_path = join(dirname(__file__), "../../.env")
 load_dotenv(dotenv_path)
 
@@ -37,15 +34,15 @@ client = TestClient(pavlok.app)
 
 
 def test_vibrate():
-    response = client.get("/vibrate", headers=pavlok_headers)
+    response = client.get("/vibrate")
     assert response.status_code == 200
 
 
 def test_beep():
-    response = client.get("/beep", headers=pavlok_headers)
+    response = client.get("/beep")
     assert response.status_code == 200
 
 
 def test_zap():
-    response = client.get("/zap", headers=pavlok_headers)
+    response = client.get("/zap")
     assert response.status_code == 200
