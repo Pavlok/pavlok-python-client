@@ -43,7 +43,7 @@ class Pavlok:
     ):
         self.client_id = client_id
         self.client_secret = client_secret
-        self.token = None if token is None else token.strip()
+        self.token = None if token is None else token
         self.name = name
         self.access_token_url = access_token_url
         self.authorize_url = authorize_url
@@ -103,7 +103,7 @@ class Pavlok:
     async def zap(self, strength: str = "200", reason: str = ""):
         return await self.send_stimulus("zap", strength, reason)
 
-    def start(self, port: int = 8000):
+    def start(self, port: int = 8000, from_testing: bool = False):
         self.app = FastAPI(title=self.title, version="0.1.0")
 
         self.app.add_middleware(SessionMiddleware, secret_key="secret")
@@ -190,4 +190,5 @@ class Pavlok:
         async def set_token(token: str, request: Request):
             return self.set_token(token, request)
 
-        uvicorn.run(app=self.app, port=port)
+        if not from_testing:
+            uvicorn.run(app=self.app, port=port)
