@@ -11,9 +11,14 @@ from fastapi.staticfiles import StaticFiles
 from starlette.requests import Request
 import uvicorn
 import requests
+import sqlite3
+from pyclickup import ClickUp
 
 from pavlok.main import Pavlok
-from services import get_clickup_tasks, add_integration
+
+
+connection = sqlite3.connect('clickup.db', check_same_thread=False)
+cursor = connection.cursor()
 
 dotenv_path = join(dirname(__file__), ".env")
 load_dotenv(dotenv_path)
@@ -29,6 +34,52 @@ pavlok = Pavlok(
 )
 
 app = FastAPI(title=pavlok.title, version="0.1.0")
+
+
+def add_integration(pavlok_user_id, clickup_token):
+    # "ON CONFLICT (pavlok_user_id, name) DO UPDATE SET access_token = excluded.access_token"
+    integration_query = (
+        "INSERT INTO clickup(access_token, pavlok_user_id) VALUES('{0}', '{1}')"
+        "".format(clickup_token, pavlok_user_id)
+    )
+    cursor.execute(integration_query)
+    cursor.connection.commit()
+
+
+def get_clickup_token(pavlok_user_id):
+    clickup_token_query = "SELECT id, pavlok_user_id, access_token FROM clickup WHERE pavlok_user_id = '{0}' LIMIT 1".format(
+        pavlok_user_id
+    )
+    results = cursor.execute(clickup_token_query).fetchall()
+    if len(results) == 0:
+        return False, False, "ClickUp not integrated for user"
+    else:
+        result = results[0]
+        if not result[2]:
+            return True, False, "Clickup not connected for user"
+        else:
+            return True, True, result
+
+
+def get_clickup_tasks(pavlok_user_id):
+    is_integrated, is_token_present, result = get_clickup_token(pavlok_user_id)
+    if not is_integrated or not is_token_present:
+        return is_integrated, is_token_present, result
+    else:
+
+        clickup = ClickUp(result[2])
+
+        main_team = clickup.teams[0]
+
+        tasks = clickup._get_tasks(team_id=main_team.id)
+        return is_integrated, is_token_present, tasks
+
+
+
+@app.on_event("shutdown")
+async def database_disconnect():
+    await connection.close()
+
 
 static_path = join(dirname(__file__), "static")
 
@@ -89,7 +140,7 @@ def clickup_login(request: Request):
 @app.get("/clickup/callback")
 def clickup_auth_callback(request: Request):
     print(request.query_params)
-    code = request.query_params.get('code')
+    code = request.query_params.get("code")
     payload = {
         "client_id": os.environ.get("clickup_client_id"),
         "client_secret": os.environ.get("clickup_client_secret"),
@@ -172,4 +223,12 @@ async def set_token(token: str, request: Request):
 
 
 if __name__ == "__main__":
+    create_table_query = (
+        "CREATE TABLE IF NOT EXISTS clickup ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "pavlok_user_id INTEGER, "
+        "access_token TEXT NOT NULL"
+        ")"
+    )
+    cursor.execute(create_table_query)
     uvicorn.run(app="clickup:app", port=8000, reload=True)

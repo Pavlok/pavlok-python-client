@@ -32,7 +32,6 @@ pep517==0.11.0
 pkginfo==1.7.1
 platformdirs==2.4.0
 pluggy==1.0.0
-psycopg2-binary==2.8.6
 py==1.10.0
 pyclickup==0.1.4
 pycparser==2.20
@@ -48,6 +47,7 @@ requests-toolbelt==0.9.1
 rfc3986==1.5.0
 six==1.16.0
 sniffio==1.2.0
+SQLAlchemy==1.4.25
 starlette==0.14.2
 toml==0.10.2
 tomli==1.2.1
