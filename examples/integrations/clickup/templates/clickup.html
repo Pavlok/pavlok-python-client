@@ -8,8 +8,8 @@
       <!-- New Table -->
       <div class="w-full overflow-hidden rounded-lg shadow-xs">
           {% if not is_integrated %}
-            <form method ="get" action="/clickup/login">
-                  <button
+            <a href="/clickup/login">
+              <button
                     class="
                       px-4
                       py-2
@@ -26,13 +26,36 @@
                     "
                     type="submit"
                   >
-                      Log in To ClickUp!
+                      Connect
                   </button>
-                </form>
+            </a>
           {% else %}
             {% if not is_token_present %}
                 Integrated but no token
             {% else %}
+                <div class="w-full flex flex-end">
+                    <a href="/clickup/disconnect">
+                      <button
+                            class="
+                              px-4
+                              py-2
+                              mt-4
+                              text-sm
+                              font-medium
+                              text-gray-800
+                              font-bold
+                              bg-red-400
+                              rounded-lg
+                              active:bg-red-400
+                              hover:bg-red-300
+                              text-center
+                            "
+                            type="submit"
+                          >
+                              Disconnect
+                          </button>
+                    </a>
+                </div>
                 <div class="w-full overflow-x-auto">
                   <table class="w-full whitespace-no-wrap">
                     <thead>

@@ -36,13 +36,22 @@ pavlok = Pavlok(
 app = FastAPI(title=pavlok.title, version="0.1.0")
 
 
-def add_integration(pavlok_user_id, clickup_token):
-    # "ON CONFLICT (pavlok_user_id, name) DO UPDATE SET access_token = excluded.access_token"
-    integration_query = (
+def connect_clickup(pavlok_user_id, clickup_token):
+    # "ON CONFLICT (pavlok_user_id) DO UPDATE SET access_token = excluded.access_token"
+    query = (
         "INSERT INTO clickup(access_token, pavlok_user_id) VALUES('{0}', '{1}')"
         "".format(clickup_token, pavlok_user_id)
     )
-    cursor.execute(integration_query)
+    cursor.execute(query)
+    cursor.connection.commit()
+
+
+def disconnect_clickup(pavlok_user_id):
+    query = (
+        "DELETE FROM clickup WHERE pavlok_user_id='{0}'"
+        "".format(pavlok_user_id)
+    )
+    cursor.execute(query)
     cursor.connection.commit()
 
 
@@ -73,7 +82,6 @@ def get_clickup_tasks(pavlok_user_id):
 
         tasks = clickup._get_tasks(team_id=main_team.id)
         return is_integrated, is_token_present, tasks
-
 
 
 @app.on_event("shutdown")
@@ -152,7 +160,13 @@ def clickup_auth_callback(request: Request):
     )
     print(clickup_token_resp)
     resp = clickup_token_resp.json()
-    add_integration(pavlok.token["user"]["id"], resp["access_token"])
+    connect_clickup(pavlok.token["user"]["id"], resp["access_token"])
+    return RedirectResponse(url="/clickup")
+
+
+@app.get("/clickup/disconnect")
+def clickup_login(request: Request):
+    disconnect_clickup(pavlok.token["user"]["id"])
     return RedirectResponse(url="/clickup")
 
 
