@@ -120,3 +120,4 @@ venv/
 .requirements.txt.swp
 .vscode/
 .idea/
+examples/integrations/clickup/clickup.db

@@ -10,7 +10,7 @@ def read(f):
 
 setup(
     name='pavlok',
-    version='0.1.3',
+    version='0.1.4',
     license='MIT',
     author="Maneesh Sethi",
     author_email='maneesh@pavlok.com',
