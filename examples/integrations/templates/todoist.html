@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% block title%}
+    <title>Todoist - Pavlok</title>
+{% endblock %}
+{% block main %}
+
+    <div class="container px-6 mx-auto grid">
+      <!-- New Table -->
+      <div class="w-full overflow-hidden rounded-lg shadow-xs">
+          {% if not is_integrated %}
+            <a href="/todoist/login">
+              <button
+                    class="
+                      px-4
+                      py-2
+                      mt-4
+                      text-sm
+                      font-medium
+                      text-gray-800
+                      font-bold
+                      bg-yellow-400
+                      rounded-lg
+                      active:bg-yellow-400
+                      hover:bg-yellow-300
+                      text-center
+                    "
+                    type="submit"
+                  >
+                      Connect
+                  </button>
+            </a>
+          {% else %}
+            {% if not is_token_present %}
+                Integrated but no token
+            {% else %}
+                <div class="w-full flex flex-end">
+                    <a href="/todoist/disconnect">
+                      <button
+                            class="
+                              px-4
+                              py-2
+                              mt-4
+                              text-sm
+                              font-medium
+                              text-gray-800
+                              font-bold
+                              bg-red-400
+                              rounded-lg
+                              active:bg-red-400
+                              hover:bg-red-300
+                              text-center
+                            "
+                            type="submit"
+                          >
+                              Disconnect
+                          </button>
+                    </a>
+                </div>
+                <div class="w-full overflow-x-auto">
+                  <table class="w-full whitespace-no-wrap">
+                    <thead>
+                      <tr
+                        class="
+                          text-xs
+                          font-semibold
+                          tracking-wide
+                          text-left text-gray-500
+                          uppercase
+                          border-b
+                          dark:border-gray-700
+                          bg-gray-50
+                          dark:text-gray-400 dark:bg-gray-800
+                        "
+                      >
+                        <th class="px-4 py-3">Projects</th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      class="
+                        bg-white
+                        divide-y
+                        dark:divide-gray-700 dark:bg-gray-800
+                      "
+                    >
+                      {% for project in projects %}
+                          <tr class="text-gray-700 dark:text-gray-400">
+
+                            <td class="px-4 py-3 text-sm">{{ project.name }} </td>
+                          </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+            {% endif %}
+          {% endif %}
+      </div>
+    </div>
+  </main>
+{% endblock %}

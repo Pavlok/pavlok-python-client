@@ -22,6 +22,8 @@ function data() {
 
     if (lastPart === "clickup") {
         return 1;
+    }else if (lastPart === "todoist") {
+        return 2;
     }else{
         return 0;
     }
